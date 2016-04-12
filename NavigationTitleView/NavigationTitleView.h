@@ -10,6 +10,8 @@
 
 @interface NavigationTitleView : UIView
 
+- (void)updateText:(NSString *)text andTitleFont:(UIFont *)font andTitleColor:(UIColor *)color;
+
 - (instancetype)initWithFrame:(CGRect)frame Text:(NSString *)text;
 - (instancetype)initWithFrame:(CGRect)frame Text:(NSString *)text andTitleFont:(UIFont *)font;
 - (instancetype)initWithFrame:(CGRect)frame Text:(NSString *)text andTitleFont:(UIFont *)font andTitleColor:(UIColor *)color;

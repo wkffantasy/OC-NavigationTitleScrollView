@@ -20,6 +20,9 @@
 @property (weak, nonatomic) UILabel * lableSecond;
 @property (weak, nonatomic) UIView * containerView;
 
+@property (strong, nonatomic) UIFont * titleFont;
+@property (strong, nonatomic) UIColor * titleColor;
+
 @end
 
 @implementation NavigationTitleView
@@ -43,9 +46,6 @@
     self.clipsToBounds = YES;
     self.userInteractionEnabled = NO;
     
-    font = font ? font : defaultFont;
-    color = color ? color : defaultColor;
-    
     [self setupChildViewFrame:(CGRect)frame Text:text andTitleFont:font andTitleColor:color];
     
   }
@@ -53,10 +53,27 @@
   
 }
 
+- (void)updateText:(NSString *)text andTitleFont:(UIFont *)font andTitleColor:(UIColor *)color{
+  
+  font = font ? font : self.titleFont;
+  color = color ? color : self.titleColor;
+  _lableSecond.text = text;
+  _lableFirst.text = text;
+  [self beReadyToAnimateFrame:self.bounds];
+  
+  
+}
+
 
 - (void)setupChildViewFrame:(CGRect)frame Text:(NSString *)text andTitleFont:(UIFont *)font andTitleColor:(UIColor *)color{
   
-  NSAssert1(text.length, @"%@ textlength == 0", self);
+  [_containerView.layer removeAnimationForKey:@"containerView animation"];
+  
+  font = font ? font : defaultFont;
+  color = color ? color : defaultColor;
+  
+  self.titleFont = font;
+  self.titleColor = color;
   
   UIView * containerView = [[UIView alloc]initWithFrame:frame];
   containerView.backgroundColor = [UIColor clearColor];
@@ -92,10 +109,12 @@
   if (rect.size.width <= frame.size.width) {
     
     _lableFirst.frame = frame;
-    [_lableSecond removeFromSuperview];
+    _lableSecond.hidden = YES;
+    [_containerView.layer removeAnimationForKey:@"containerView animation"];
     
   } else {
     
+    _lableSecond.hidden = NO;
     _lableFirst.frame = CGRectMake(0, 0, rect.size.width, self.frame.size.height);
     _lableSecond.frame = CGRectMake(rect.size.width+labelMargin,0 , rect.size.width, self.frame.size.height);
     [self startToAnimate];
