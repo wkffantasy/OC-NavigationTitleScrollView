@@ -10,8 +10,12 @@
 
 #define  WKFColor(a,b,c,d) [UIColor colorWithRed:(a)/255. green:(b)/255. blue:(c)/255. alpha:(d)]
 
+/**
+ * 默认字体和颜色
+ */
 #define defaultColor WKFColor(81, 81, 81, 1)
 #define defaultFont  [UIFont systemFontOfSize:17]
+
 #define labelMargin  20
 
 @interface NavigationTitleView ()<UIScrollViewDelegate>
@@ -61,9 +65,7 @@
   _lableFirst.text = text;
   [self beReadyToAnimateFrame:self.bounds];
   
-  
 }
-
 
 - (void)setupChildViewFrame:(CGRect)frame Text:(NSString *)text andTitleFont:(UIFont *)font andTitleColor:(UIColor *)color{
   
@@ -100,11 +102,8 @@
 }
 
 - (void)beReadyToAnimateFrame:(CGRect)frame {
-
   
   CGRect rect = [self.lableFirst.text boundingRectWithSize:CGSizeMake(MAXFLOAT, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:self.lableFirst.font} context:nil];
-  
-  
   
   if (rect.size.width <= frame.size.width) {
     
