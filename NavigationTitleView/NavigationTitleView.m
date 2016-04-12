@@ -9,154 +9,112 @@
 #import "NavigationTitleView.h"
 
 #define  WKFColor(a,b,c,d) [UIColor colorWithRed:(a)/255. green:(b)/255. blue:(c)/255. alpha:(d)]
-#define padding 1
-#define labelMargin 10
+
+#define defaultColor WKFColor(81, 81, 81, 1)
+#define defaultFont  [UIFont systemFontOfSize:17]
+#define labelMargin  20
 
 @interface NavigationTitleView ()<UIScrollViewDelegate>
 
 @property (weak, nonatomic) UILabel * lableFirst;
 @property (weak, nonatomic) UILabel * lableSecond;
-@property (weak, nonatomic) UIScrollView * scrollView;
+@property (weak, nonatomic) UIView * containerView;
 
-@property (strong, nonatomic) NSTimer *myTimer;
-
-@property (assign, nonatomic) CGFloat textWidth;
-
-
-#warning 待优化
 @end
 
 @implementation NavigationTitleView
 
-- (instancetype)initWithFrame:(CGRect)frame{
+- (instancetype)initWithFrame:(CGRect)frame Text:(NSString *)text{
   
+  return [self initWithFrame:frame Text:text andTitleFont:defaultFont];
+  
+}
+
+- (instancetype)initWithFrame:(CGRect)frame Text:(NSString *)text andTitleFont:(UIFont *)font{
+
+  return [self initWithFrame:frame Text:text andTitleFont:font andTitleColor:defaultColor];
+  
+}
+
+- (instancetype)initWithFrame:(CGRect)frame Text:(NSString *)text andTitleFont:(UIFont *)font andTitleColor:(UIColor *)color{
+
   if (self = [super initWithFrame:frame]) {
     
+    self.clipsToBounds = YES;
     self.userInteractionEnabled = NO;
+    
+    font = font ? font : defaultFont;
+    color = color ? color : defaultColor;
+    
+    [self setupChildViewFrame:(CGRect)frame Text:text andTitleFont:font andTitleColor:color];
     
   }
   return self;
   
 }
 
-- (void)setupChildView{
+
+- (void)setupChildViewFrame:(CGRect)frame Text:(NSString *)text andTitleFont:(UIFont *)font andTitleColor:(UIColor *)color{
   
-  UIScrollView * scrollView = [[UIScrollView alloc]init];
-  scrollView.pagingEnabled = NO;
-  scrollView.showsHorizontalScrollIndicator = NO;
-  scrollView.bounces = NO;
-  _scrollView = scrollView;
-  [self addSubview:scrollView];
+  NSAssert1(text.length, @"%@ textlength == 0", self);
+  
+  UIView * containerView = [[UIView alloc]initWithFrame:frame];
+  containerView.backgroundColor = [UIColor clearColor];
+  _containerView = containerView;
+  [self addSubview:containerView];
   
   UILabel * labelFirst = [[UILabel alloc]init];
   labelFirst.textAlignment = NSTextAlignmentCenter;
+  labelFirst.font = font;
+  labelFirst.textColor = color;
+  labelFirst.text = text;
   _lableFirst = labelFirst;
-  [scrollView addSubview:labelFirst];
+  [_containerView addSubview:labelFirst];
   
   UILabel * labelSecond = [[UILabel alloc]init];
   labelSecond.textAlignment = NSTextAlignmentCenter;
+  labelSecond.font = font;
+  labelSecond.text = text;
+  labelSecond.textColor = color;
   _lableSecond = labelSecond;
-  [scrollView addSubview:labelSecond];
+  [_containerView addSubview:labelSecond];
   
+  [self beReadyToAnimateFrame:frame];
 }
 
-- (void)setTitleName:(NSString *)titleName{
-  
-  _titleName = titleName;
-  [self setupChildView];
-  
-  self.lableFirst.text = _titleName;
-  self.lableSecond.text = _titleName;
-  
-}
-#pragma mark - 计时器
-//添加计时器
-- (void)addTimer {
-  
-  self.myTimer = [NSTimer scheduledTimerWithTimeInterval:0.05 target:self selector:@selector(runTimer) userInfo:nil repeats:YES];
-  [[NSRunLoop currentRunLoop] addTimer:_myTimer forMode:NSRunLoopCommonModes];
-  
-}
+- (void)beReadyToAnimateFrame:(CGRect)frame {
 
-//移除计时器
-- (void)removeTimer {
   
-  [self.myTimer invalidate];
+  CGRect rect = [self.lableFirst.text boundingRectWithSize:CGSizeMake(MAXFLOAT, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:self.lableFirst.font} context:nil];
   
-  self.myTimer = nil;
   
-}
-
-//计时器运行的方法
--(void)runTimer{
   
-  CGFloat x = self.scrollView.contentOffset.x;
-  
-  x += padding;
-  
-  if (x <= self.textWidth && x + padding >= self.textWidth) {
+  if (rect.size.width <= frame.size.width) {
     
-    x = 0;
-    
-  }
-  
-  [self.scrollView setContentOffset:CGPointMake(x, 0) animated:NO];
-  
-  
-  
-}
-
-- (void)dealloc{
-  
-  [self removeTimer];
-  
-}
-
-- (void)layoutSubviews{
-  
-  [super layoutSubviews];
-  
-  NSAssert(_titleName.length, @"");
-  
-  if (_titleColor == nil) {
-    _titleColor = WKFColor(80, 80, 80, 1);
-  }
-  
-  if (_titleFont == nil) {
-    _titleFont = [UIFont systemFontOfSize:17];
-  }
-  
-  self.lableFirst.textColor = _titleColor;
-  self.lableSecond.textColor = _titleColor;
-  
-  self.lableFirst.font = _titleFont;
-  self.lableSecond.font = _titleFont;
-  
-  CGRect rect = [_titleName boundingRectWithSize:CGSizeMake(MAXFLOAT, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:_titleFont} context:nil];
-  
-  
-  _textWidth = rect.size.width + labelMargin + self.scrollView.frame.size.width;
-  
-  _scrollView.frame = self.bounds;
-  
-  if (rect.size.width <= self.frame.size.width) {
-    
-    _scrollView.contentSize = self.frame.size;
-    _lableFirst.frame = self.bounds;
+    _lableFirst.frame = frame;
     [_lableSecond removeFromSuperview];
     
   } else {
     
-    _scrollView.contentSize = CGSizeMake(rect.size.width * 2 + labelMargin, self.frame.size.height);
     _lableFirst.frame = CGRectMake(0, 0, rect.size.width, self.frame.size.height);
     _lableSecond.frame = CGRectMake(rect.size.width+labelMargin,0 , rect.size.width, self.frame.size.height);
-    if (self.myTimer == nil) {
-      [self addTimer];
-    }
-    
+    [self startToAnimate];
   }
-  
-  
+
+}
+
+- (void)startToAnimate{
+
+  //每秒移动20个点
+  CGFloat speed = 20.0;
+  CABasicAnimation * animate = [CABasicAnimation animation];
+  animate.fromValue = @(0);
+  animate.toValue=@(-self.lableFirst.frame.size.width - labelMargin);
+  animate.keyPath = @"transform.translation.x";
+  animate.duration = (_lableFirst.frame.size.width + labelMargin) / speed;
+  animate.removedOnCompletion = YES;
+  animate.repeatCount = MAXFLOAT;
+  [_containerView.layer addAnimation:animate forKey:@"containerView animation"];
   
 }
 

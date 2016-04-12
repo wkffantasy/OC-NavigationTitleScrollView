@@ -20,12 +20,13 @@
   
   [super viewDidLoad];
   
-  NavigationTitleView * titleView = [[NavigationTitleView alloc]init];
-//  titleView.titleColor = [UIColor redColor];
-//  titleView.titleName = @"父亲牵着我的双手静静走过清晨那安安静静的石板路";
-//  titleView.titleName = @"缓缓飘落的枫叶像思念";
-  titleView.titleName = @"为你弹奏肖邦的夜曲，纪念我逝去的爱情";
-  titleView.frame = CGRectMake(0, 0, self.view.frame.size.width - 100, 40);
+  
+  CGRect frame = CGRectMake(0, 0, self.view.frame.size.width - 100, 40);
+  
+  NavigationTitleView * titleView = [[NavigationTitleView alloc]initWithFrame:frame Text:@"缓缓飘落的枫叶像思念，我点燃烛火温暖岁末的秋天" andTitleFont:nil andTitleColor:[UIColor redColor]];
+//  NavigationTitleView * titleView = [[NavigationTitleView alloc]initWithFrame:frame Text:@"为你弹奏肖邦的夜曲，纪念我逝去的爱情" andTitleFont:nil andTitleColor:nil];
+//  NavigationTitleView * titleView = [[NavigationTitleView alloc]initWithFrame:frame Text:@"七里香"];
+  
   self.navigationItem.titleView = titleView;
   
 }

@@ -10,9 +10,8 @@
 
 @interface NavigationTitleView : UIView
 
-@property (copy, nonatomic) NSString  * titleName;
-@property (strong, nonatomic) UIFont  * titleFont;
-@property (strong, nonatomic) UIColor * titleColor;
-
+- (instancetype)initWithFrame:(CGRect)frame Text:(NSString *)text;
+- (instancetype)initWithFrame:(CGRect)frame Text:(NSString *)text andTitleFont:(UIFont *)font;
+- (instancetype)initWithFrame:(CGRect)frame Text:(NSString *)text andTitleFont:(UIFont *)font andTitleColor:(UIColor *)color;
 
 @end
