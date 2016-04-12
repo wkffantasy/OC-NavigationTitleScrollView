@@ -33,13 +33,13 @@
 
 - (instancetype)initWithFrame:(CGRect)frame Text:(NSString *)text{
   
-  return [self initWithFrame:frame Text:text andTitleFont:defaultFont];
+  return [self initWithFrame:frame Text:text andTitleFont:nil];
   
 }
 
 - (instancetype)initWithFrame:(CGRect)frame Text:(NSString *)text andTitleFont:(UIFont *)font{
 
-  return [self initWithFrame:frame Text:text andTitleFont:font andTitleColor:defaultColor];
+  return [self initWithFrame:frame Text:text andTitleFont:font andTitleColor:nil];
   
 }
 
@@ -50,7 +50,7 @@
     self.clipsToBounds = YES;
     self.userInteractionEnabled = NO;
     
-    [self setupChildViewFrame:(CGRect)frame Text:text andTitleFont:font andTitleColor:color];
+    [self setupChildViewFrame:frame Text:text andTitleFont:font andTitleColor:color];
     
   }
   return self;
@@ -63,11 +63,14 @@
   color = color ? color : self.titleColor;
   _lableSecond.text = text;
   _lableFirst.text = text;
-  [self beReadyToAnimateFrame:self.bounds];
+  
+  [self layoutSubviews];
   
 }
 
 - (void)setupChildViewFrame:(CGRect)frame Text:(NSString *)text andTitleFont:(UIFont *)font andTitleColor:(UIColor *)color{
+  
+  self.frame = frame;
   
   [_containerView.layer removeAnimationForKey:@"containerView animation"];
   
@@ -77,7 +80,7 @@
   self.titleFont = font;
   self.titleColor = color;
   
-  UIView * containerView = [[UIView alloc]initWithFrame:frame];
+  UIView * containerView = [[UIView alloc]initWithFrame:self.bounds];
   containerView.backgroundColor = [UIColor clearColor];
   _containerView = containerView;
   [self addSubview:containerView];
@@ -98,7 +101,6 @@
   _lableSecond = labelSecond;
   [_containerView addSubview:labelSecond];
   
-  [self beReadyToAnimateFrame:frame];
 }
 
 - (void)beReadyToAnimateFrame:(CGRect)frame {
@@ -115,7 +117,7 @@
     
     _lableSecond.hidden = NO;
     _lableFirst.frame = CGRectMake(0, 0, rect.size.width, self.frame.size.height);
-    _lableSecond.frame = CGRectMake(rect.size.width+labelMargin,0 , rect.size.width, self.frame.size.height);
+    _lableSecond.frame = CGRectMake(rect.size.width + labelMargin,0 , rect.size.width, self.frame.size.height);
     [self startToAnimate];
   }
 
@@ -127,12 +129,19 @@
   CGFloat speed = 20.0;
   CABasicAnimation * animate = [CABasicAnimation animation];
   animate.fromValue = @(0);
-  animate.toValue=@(-self.lableFirst.frame.size.width - labelMargin);
+  animate.toValue=@( - self.lableFirst.frame.size.width - labelMargin);
   animate.keyPath = @"transform.translation.x";
   animate.duration = (_lableFirst.frame.size.width + labelMargin) / speed;
   animate.removedOnCompletion = YES;
   animate.repeatCount = MAXFLOAT;
   [_containerView.layer addAnimation:animate forKey:@"containerView animation"];
+  
+}
+- (void)layoutSubviews{
+  
+  [super layoutSubviews];
+  
+  [self beReadyToAnimateFrame:self.bounds];
   
 }
 
