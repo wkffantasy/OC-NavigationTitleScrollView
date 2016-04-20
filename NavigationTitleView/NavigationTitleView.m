@@ -11,7 +11,7 @@
 #define  WKFColor(a,b,c,d) [UIColor colorWithRed:(a)/255. green:(b)/255. blue:(c)/255. alpha:(d)]
 
 /**
- * 默认字体和颜色
+ * default Color and Font
  */
 #define defaultColor WKFColor(81, 81, 81, 1)
 #define defaultFont  [UIFont systemFontOfSize:17]
@@ -59,11 +59,15 @@
 
 - (void)updateText:(NSString *)text andTitleFont:(UIFont *)font andTitleColor:(UIColor *)color{
   
-  font = font ? font : self.titleFont;
-  color = color ? color : self.titleColor;
+  self.titleFont = font ? font : self.titleFont;
+  self.titleColor = color ? color : self.titleColor;
   _lableSecond.text = text;
   _lableFirst.text = text;
   
+  _lableFirst.textColor = color;
+  _lableSecond.textColor = color;
+  _lableSecond.font = font;
+  _lableFirst.font = font;
   [self layoutSubviews];
   
 }
@@ -125,7 +129,7 @@
 
 - (void)startToAnimate{
 
-  //每秒移动20个点
+  //move 20pt/s
   CGFloat speed = 20.0;
   CABasicAnimation * animate = [CABasicAnimation animation];
   animate.fromValue = @(0);

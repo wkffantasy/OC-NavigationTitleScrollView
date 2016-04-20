@@ -11,7 +11,7 @@
 @interface NavigationTitleView : UIView
 
 /**
- *  更新label的文字内容
+ *  update label text
  */
 - (void)updateText:(NSString *)text
       andTitleFont:(UIFont *)font
